@@ -13,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "cart_items")
-public class CartItem {
+public class CartItem  extends  BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false, updatable = false)
@@ -37,8 +37,6 @@ public class CartItem {
     @Column(name = "discount_amount", precision = 18, scale = 2)
     private BigDecimal discountAmount;
 
-    @ColumnDefault("sysdatetime()")
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+
 
 }

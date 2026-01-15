@@ -1,10 +1,7 @@
 package com.sd61.urbankicks.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
@@ -16,7 +13,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "vouchers")
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class Voucher extends BaseEntity {
     @Id

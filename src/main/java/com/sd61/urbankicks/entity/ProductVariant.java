@@ -27,9 +27,6 @@ public class ProductVariant extends BaseEntity {
     @Column(name = "qr_code")
     private String qrCode;
 
-    @ColumnDefault("''")
-    @Column(name = "thumbnail", length = 300)
-    private String thumbnail;
 
     @Nationalized
     @Lob
