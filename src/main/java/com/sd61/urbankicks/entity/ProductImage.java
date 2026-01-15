@@ -1,7 +1,10 @@
 package com.sd61.urbankicks.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
@@ -13,11 +16,15 @@ import java.util.UUID;
 @Table(name = "product_images")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ProductImage extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false, updatable = false)
+    private UUID id;
+
+    @ColumnDefault("0")
+    @Column(name = "is_thumbnail", nullable = false)
+    private Boolean isThumbnail = false;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", nullable = false)
