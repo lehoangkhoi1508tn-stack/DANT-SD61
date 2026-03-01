@@ -1,4 +1,4 @@
-package com.sd61.urbankicks.entity;
+package com.sd61.urbankicks.features.order.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

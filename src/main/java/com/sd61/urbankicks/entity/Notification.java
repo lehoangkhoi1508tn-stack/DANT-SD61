@@ -1,5 +1,6 @@
 package com.sd61.urbankicks.entity;
 
+import com.sd61.urbankicks.features.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,5 +1,7 @@
-package com.sd61.urbankicks.entity;
+package com.sd61.urbankicks.features.order.entity;
 
+import com.sd61.urbankicks.entity.BaseEntity;
+import com.sd61.urbankicks.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -70,6 +72,6 @@ public class Order extends BaseEntity {
     private Integer orderType;
 
     @Column(name = "status", nullable = false)
-    private Integer status;
+    private OrderStatus status;
 
 }
