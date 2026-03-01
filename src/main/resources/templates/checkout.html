@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><title>Thanh Toán - UrbanKicks</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <style>
+    .payment-method { border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+    .payment-method.active { border-color: var(--primary); background: #f0f7ff; }
+    .payment-method input { width: 18px; height: 18px; accent-color: var(--primary); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div style="margin-bottom: 25px; color: var(--text-muted); font-weight: 500;">
+    Giỏ hàng > <span style="color: var(--dark);">Thanh toán</span>
+  </div>
+
+  <div class="grid-layout">
+    <div>
+      <div class="card">
+        <div class="card-title"><span class="step-number">1</span> Thông tin người nhận</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div>
+            <label style="font-size: 0.85em; font-weight: 600; color: var(--text-muted)">HỌ VÀ TÊN *</label>
+            <input type="text" id="name" class="form-input" placeholder="Nhập họ tên">
+          </div>
+          <div>
+            <label style="font-size: 0.85em; font-weight: 600; color: var(--text-muted)">SỐ ĐIỆN THOẠI *</label>
+            <input type="text" id="phone" class="form-input" placeholder="09xxxxxxxx">
+          </div>
+        </div>
+        <label style="font-size: 0.85em; font-weight: 600; color: var(--text-muted); margin-top: 10px; display:block;">ĐỊA CHỈ GIAO HÀNG *</label>
+        <textarea id="addr" class="form-input" rows="2" placeholder="Số nhà, tên đường..."></textarea>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="step-number">2</span> Phương thức thanh toán</div>
+        <label class="payment-method active" onclick="selectPay('COD', this)">
+          <input type="radio" name="pay" value="COD" checked>
+          <div><strong>Tiền mặt khi nhận hàng (COD)</strong><br><small style="color: var(--text-muted)">Thanh toán khi nhận hàng.</small></div>
+        </label>
+        <label class="payment-method" onclick="selectPay('QR', this)">
+          <input type="radio" name="pay" value="QR">
+          <div><strong>Chuyển khoản VietQR</strong><br><small style="color: var(--text-muted)">Mở App Ngân hàng để quét mã.</small></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card" style="position: sticky; top: 20px;">
+      <div class="card-title">Đơn hàng của bạn</div>
+
+      <div style="border: 1px dashed var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 20px; background: #f0f7ff;">
+        <small style="color: var(--primary); font-weight: 600;">🏷️ Mã giảm giá</small>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <input type="text" class="form-input" style="margin:0;" placeholder="Nhập mã...">
+          <button class="btn-main" style="width: auto; padding: 10px 20px;">Áp dụng</button>
+        </div>
+      </div>
+
+      <div class="summary-row"><span>Tạm tính</span><span th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span></div>
+      <div class="summary-row"><span>Phí vận chuyển</span><span style="color: #28a745; font-weight: 600;">Miễn phí</span></div>
+      <div class="summary-row total"><span>Tổng cộng</span><span style="color: var(--primary)" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span></div>
+
+      <button onclick="processOrder()" class="btn-main" style="margin-top: 15px;">ĐẶT HÀNG NGAY</button>
+    </div>
+  </div>
+</div>
+
+<div id="qrModal" class="modal-overlay">
+  <div class="modal-box">
+    <h3 style="margin-top: 0;">Quét mã để thanh toán</h3>
+    <p style="color: var(--text-muted); font-size: 0.9em;">Sử dụng App Ngân hàng hoặc ZaloPay để quét mã.</p>
+    <img th:src="'https://img.vietqr.io/image/MB-123456789-compact.png?amount=' + ${totalAmount} + '&addInfo=ThanhToanDonHang'" alt="VietQR">
+
+    <button onclick="submitData()" class="btn-main" style="margin-bottom: 10px;">TÔI ĐÃ THANH TOÁN</button>
+    <button onclick="closeModal()" class="btn-outline">ĐÓNG, TÔI CHƯA THANH TOÁN</button>
+  </div>
+</div>
+
+<script>
+  function selectPay(type, el) {
+      document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+      el.classList.add('active');
+      window.payType = type;
+  }
+
+  function processOrder() {
+      let name = document.getElementById('name').value;
+      let phone = document.getElementById('phone').value;
+      let addr = document.getElementById('addr').value;
+      if(!name || !phone || !addr) { alert('Vui lòng điền đầy đủ thông tin nhận hàng!'); return; }
+
+      let payType = window.payType || 'COD';
+      if(payType === 'QR') {
+          document.getElementById('qrModal').style.display = 'flex'; // Hiện Popup
+      } else {
+          submitData(); // COD thì submit luôn
+      }
+  }
+
+  function closeModal() { document.getElementById('qrModal').style.display = 'none'; }
+
+  function submitData() {
+      const data = {
+          receiverName: document.getElementById('name').value,
+          phone: document.getElementById('phone').value,
+          shippingAddress: document.getElementById('addr').value,
+          totalAmount: [[${totalAmount}]]
+      };
+
+      fetch('/api/cart/create-order', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(data)
+      }).then(() => {
+          alert('🎉 Đặt hàng thành công! Trạng thái đang Chờ xử lý.');
+          window.location.href = '/cart';
+      });
+  }
+</script>
+</body>
+</html>

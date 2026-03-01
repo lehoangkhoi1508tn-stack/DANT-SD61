@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Giỏ hàng - UrbanKicks</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .cart-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; color: var(--text-muted); font-size: 0.85em; font-weight: 600; text-transform: uppercase; padding-bottom: 15px; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .cart-item { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .qty-box { display: flex; border: 1px solid var(--border); border-radius: 6px; width: fit-content; overflow: hidden; }
+        .qty-btn { background: #fff; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; }
+        .qty-val { width: 40px; text-align: center; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); font-weight: 600; }
+        .price-col { font-weight: 600; color: var(--dark); }
+        .total-col { font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 style="margin-bottom: 25px;">Giỏ hàng</h2>
+
+    <div class="grid-layout">
+        <div class="card">
+            <div class="cart-header">
+                <div>Sản phẩm</div><div>Giá</div><div>SL</div><div>Thành tiền</div>
+            </div>
+
+            <div th:each="item : ${cartItems}" class="cart-item" th:data-price="${item.unitPrice}" th:data-id="${item.id}">
+                <div>
+                    <strong th:text="${item.productName}"></strong><br>
+                    <small style="color: var(--text-muted)">Code: SP-01</small>
+                </div>
+                <div class="price-col" th:text="${#numbers.formatDecimal(item.unitPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'"></div>
+                <div>
+                    <div class="qty-box">
+                        <button class="qty-btn" onclick="updateQty(this, -1)">-</button>
+                        <input type="number" class="qty-val" th:value="${item.quantity}" readonly>
+                        <button class="qty-btn" onclick="updateQty(this, 1)">+</button>
+                    </div>
+                </div>
+                <div class="total-col"><span class="item-sum">0</span>đ</div>
+            </div>
+        </div>
+
+        <div class="card" style="position: sticky; top: 20px;">
+            <div class="card-title">Đơn hàng của bạn</div>
+            <div class="summary-row"><span>Tạm tính</span><span id="sub-total">0đ</span></div>
+            <div class="summary-row"><span>Phí vận chuyển</span><span style="color: #28a745; font-weight: 600;">Miễn phí</span></div>
+
+            <div class="summary-row total"><span>Tổng cộng</span><span id="cart-total" style="color: var(--primary)">0đ</span></div>
+
+            <button onclick="goToCheckout()" class="btn-main" style="margin-top: 15px;">THANH TOÁN NGAY</button>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 0.85em; color: var(--text-muted); text-align: center;">
+                <div style="flex:1">🛡️ Bảo mật 100%</div>
+                <div style="flex:1">🔄 Đổi trả 30 ngày</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateQty(btn, d) {
+        let row = btn.closest('.cart-item');
+        let inp = row.querySelector('.qty-val');
+        let v = parseInt(inp.value) + d;
+        if(v < 1) return;
+        inp.value = v;
+        render();
+        fetch(`/api/cart/update-qty?id=${row.dataset.id}&qty=${v}`, {method:'PUT'});
+    }
+    function render() {
+        let total = 0;
+        document.querySelectorAll('.cart-item').forEach(r => {
+            let sub = parseFloat(r.dataset.price) * parseInt(r.querySelector('.qty-val').value);
+            r.querySelector('.item-sum').innerText = sub.toLocaleString('vi-VN');
+            total += sub;
+        });
+        document.getElementById('sub-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('cart-total').innerText = total.toLocaleString('vi-VN') + 'đ';
+        window.finalTotal = total;
+    }
+    function goToCheckout() { window.location.href = '/cart/checkout?total=' + (window.finalTotal || 0); }
+    render();
+</script>
+</body>
+</html>

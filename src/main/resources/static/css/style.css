@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary: #025ec7;
+    --dark: #212529;
+    --gray-bg: #f4f7f6;
+    --border: #eaedf1;
+    --text-muted: #82869e;
+}
+
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    color: var(--dark); background-color: var(--gray-bg);
+    margin: 0; padding: 40px 20px;
+}
+
+.container { max-width: 1100px; margin: auto; }
+
+/* Layout 2 cột */
+.grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; }
+
+.card {
+    background: #fff; padding: 25px;
+    border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+}
+
+.card-title { font-size: 1.1em; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+.step-number { background: var(--gray-bg); color: var(--primary); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+/* Form & Nút bấm */
+.form-input { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; font-family: inherit; transition: 0.3s; box-sizing: border-box; }
+.form-input:focus { border-color: var(--primary); outline: none; }
+
+.btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1em; transition: 0.3s; }
+.btn-main:hover { background: #014ba1; }
+.btn-outline { background: #fff; color: var(--text-muted); border: 1px solid var(--border); padding: 16px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; }
+
+/* Dòng tóm tắt tiền */
+.summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; color: var(--text-muted); }
+.summary-row.total { font-size: 1.2em; font-weight: 700; color: var(--dark); border-top: 1px dashed var(--border); padding-top: 15px; }
+
+/* Modal QR Code */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+.modal-box { background: #fff; padding: 30px; border-radius: 16px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.modal-box img { max-width: 250px; border: 1px dashed var(--border); padding: 10px; border-radius: 10px; margin: 15px 0; }
